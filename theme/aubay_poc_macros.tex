@@ -1,0 +1,166 @@
+% Metadata setters
+\renewcommand{\AubayProjectName}{Explainable AI}
+\renewcommand{\AubayProjectShort}{EAI}
+\renewcommand{\AubayCommitteeLabel}{Comité hebdomadaire}
+\renewcommand{\AubayCommitteeCode}{Comité PoC}
+\renewcommand{\AubayCurrentPhase}{poc}
+\renewcommand{\AubayCurrentPhaseLabel}{Preuve de concept}
+\renewcommand{\AubayDeadline}{23 avril 2026}
+\renewcommand{\AubayLogoPath}{images/aubay_logo.png}
+\providecommand{\AubayTitleAuthors}{\insertauthor}
+
+\newcommand{\SetProjectName}[1]{\renewcommand{\AubayProjectName}{#1}}
+\newcommand{\SetProjectShort}[1]{\renewcommand{\AubayProjectShort}{#1}}
+\newcommand{\SetCommitteeLabel}[1]{\renewcommand{\AubayCommitteeLabel}{#1}}
+\newcommand{\SetCommitteeCode}[1]{\renewcommand{\AubayCommitteeCode}{#1}}
+\newcommand{\SetCurrentPhase}[1]{\renewcommand{\AubayCurrentPhase}{#1}}
+\newcommand{\SetCurrentPhaseLabel}[1]{\renewcommand{\AubayCurrentPhaseLabel}{#1}}
+\newcommand{\SetDeadline}[1]{\renewcommand{\AubayDeadline}{#1}}
+\newcommand{\SetLogoPath}[1]{\renewcommand{\AubayLogoPath}{#1}}
+\newcommand{\SetTitleAuthors}[1]{\renewcommand{\AubayTitleAuthors}{#1}}
+
+% Small reusable UI elements
+\newcommand{\AubayStatusChip}[2]{%
+  \tikz[baseline=-0.55ex]{
+    \node[
+      rounded corners=3pt,
+      fill=#1!12,
+      draw=#1!35,
+      line width=0.5pt,
+      text=#1,
+      font=\bfseries\scriptsize,
+      inner xsep=7pt,
+      inner ysep=3.5pt
+    ] {#2};
+  }%
+}
+
+% Pastille de renvoi aux annexes du dossier (consigne SFE : « rendre visibles les preuves,
+% faire références aux annexes du dossier »). Posée en bas à droite, au-dessus du footer.
+\newcommand{\AubayTraceRef}[1]{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[
+      anchor=north east,
+      rounded corners=3pt,
+      fill=AubayStone,
+      draw=AubayLine,
+      line width=0.5pt,
+      text=AubaySlate,
+      font=\bfseries\tiny,
+      inner xsep=6pt,
+      inner ysep=3pt
+    ] at ([xshift=-0.35cm,yshift=-0.72cm]current page.north east) {Dossier · trace #1};
+  \end{tikzpicture}%
+}
+
+\newcommand{\AubayMetricCard}[3]{%
+  \begin{beamercolorbox}[wd=\linewidth,sep=0.62em,rounded=true,shadow=false]{aubay metric}
+    {\color{AubayOrange}\bfseries\Large #1\par}
+    \vspace{0.06em}
+    {\footnotesize\bfseries #2\par}
+    {\scriptsize #3\par}
+  \end{beamercolorbox}
+}
+
+\newcommand{\AubayPoCCard}[4]{%
+  \begin{beamercolorbox}[wd=\linewidth,sep=0.56em,rounded=true,shadow=false]{aubay card}
+    {\small\bfseries #1\par}
+    \vspace{0.10em}
+    {#2\par}
+    \vspace{0.14em}
+    {\scriptsize\textcolor{AubaySlate}{#3}\par}
+    \vspace{0.20em}
+    {\footnotesize #4\par}
+  \end{beamercolorbox}
+}
+
+\newcommand{\AubayFocusPanel}[2]{%
+  \begin{beamercolorbox}[wd=\linewidth,sep=0.56em,rounded=true,shadow=false]{aubay note}
+    {\small\bfseries #1\par}
+    \vspace{0.08em}
+    {\scriptsize #2\par}
+  \end{beamercolorbox}
+}
+
+% Phase timeline
+\newcommand{\AubaySelectPhaseStyle}[2]{%
+  \ifstrequal{#1}{#2}{%
+    \def\AubayPhaseFill{AubayOrange}%
+    \def\AubayPhaseDraw{AubayOrange}%
+    \def\AubayPhaseText{white}%
+  }{%
+    \def\AubayPhaseFill{white}%
+    \def\AubayPhaseDraw{AubayLine}%
+    \def\AubayPhaseText{AubayInk}%
+  }%
+}
+
+\newcommand{\AubaySelectPhaseStyleDark}[2]{%
+  \ifstrequal{#1}{#2}{%
+    \def\AubayPhaseFill{AubayOrange}%
+    \def\AubayPhaseDraw{AubayOrange}%
+    \def\AubayPhaseText{white}%
+  }{%
+    \def\AubayPhaseFill{AubayInk}%
+    \def\AubayPhaseDraw{white!45}%
+    \def\AubayPhaseText{white}%
+  }%
+}
+
+\newcommand{\AubayPhaseBox}[4]{%
+  \AubaySelectPhaseStyle{#1}{#4}%
+  \node[
+    anchor=west,
+    rounded corners=5pt,
+    draw=\AubayPhaseDraw,
+    fill=\AubayPhaseFill,
+    text=\AubayPhaseText,
+    line width=0.9pt,
+    minimum width=2.20cm,
+    minimum height=0.84cm,
+    text width=1.92cm,
+    inner xsep=3pt,
+    outer sep=0pt,
+    align=center
+  ] at (#2,0) {\scriptsize\bfseries #3};
+}
+
+\newcommand{\AubayPhaseBoxDark}[4]{%
+  \AubaySelectPhaseStyleDark{#1}{#4}%
+  \node[
+    anchor=west,
+    rounded corners=5pt,
+    draw=\AubayPhaseDraw,
+    fill=\AubayPhaseFill,
+    text=\AubayPhaseText,
+    line width=0.9pt,
+    minimum width=2.20cm,
+    minimum height=0.84cm,
+    text width=1.92cm,
+    inner xsep=3pt,
+    outer sep=0pt,
+    align=center
+  ] at (#2,0) {\scriptsize\bfseries #3};
+}
+
+\renewcommand{\AubayPhaseTimeline}[1]{%
+  \resizebox{0.94\linewidth}{!}{%
+    \begin{tikzpicture}[baseline=-0.4ex]
+      \AubayPhaseBox{onboarding}{0.00}{Prise en main}{#1}
+      \AubayPhaseBox{sota}{2.55}{SOTA}{#1}
+      \AubayPhaseBox{poc}{5.10}{PoC}{#1}
+      \AubayPhaseBox{project}{7.65}{Projet}{#1}
+    \end{tikzpicture}%
+  }%
+}
+
+\renewcommand{\AubayPhaseTimelineDark}[1]{%
+  \resizebox{0.94\linewidth}{!}{%
+    \begin{tikzpicture}[baseline=-0.4ex]
+      \AubayPhaseBoxDark{onboarding}{0.00}{Prise en main}{#1}
+      \AubayPhaseBoxDark{sota}{2.55}{SOTA}{#1}
+      \AubayPhaseBoxDark{poc}{5.10}{PoC}{#1}
+      \AubayPhaseBoxDark{project}{7.65}{Projet}{#1}
+    \end{tikzpicture}%
+  }%
+}

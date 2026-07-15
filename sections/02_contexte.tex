@@ -1,0 +1,89 @@
+% ============================================================
+% S03 — Aubay / Lab'Innov
+% ============================================================
+\begin{frame}{Aubay : Lab'Innov}
+  \framesubtitle{Une ESN face au « mur de la fiabilité »}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.32\textwidth}
+      \AubayMetricCard{9\,000}{collaborateurs}{ESN européenne cotée}
+      \vspace{0.22cm}
+      \AubayMetricCard{601,6\,M€}{CA 2025}{conseil, cloud, data, IA}
+    \column{0.64\textwidth}
+      \vspace{0.15cm}
+      \begin{itemize}
+        \item Systèmes numériques \textbf{critiques} : banque, assurance, secteur public
+        \item IA générative : adoption freinée par le \textbf{mur de la fiabilité}
+        \item Hallucinations + boîte noire $\Rightarrow$ confiance impossible
+      \end{itemize}
+      \vspace{0.3cm}
+      \begin{block}{Positionnement du Lab'Innov : projet EAI}
+        \small Ne pas concurrencer les modèles fondateurs :\\
+        concevoir des \textbf{surcouches légères} de supervision et d'explicabilité.
+      \end{block}
+  \end{columns}
+\end{frame}
+
+% ============================================================
+% S04 — Équipe, mission, pivot
+% ============================================================
+\begin{frame}{Une mission qui a évolué}
+  \framesubtitle{5 stagiaires EAI : trois sujets d'explicabilité, un choix assumé}
+  \centering
+  \resizebox{0.97\linewidth}{!}{%
+  \begin{tikzpicture}[
+    mstep/.style={rounded corners=4pt,draw=AubayLine,fill=white,minimum height=1.05cm,
+                 text width=2.45cm,align=center,font=\small},
+    mstepon/.style={mstep,draw=AubayOrange,fill=AubayOrange!10,font=\small\bfseries},
+    lbl/.style={font=\scriptsize\bfseries,text=AubaySlate}
+  ]
+    \draw[AubayLine,line width=2pt] (0,0) -- (14.6,0);
+    \node[mstep]   (a) at (1.3,0.95)  {État de l'art\\SAE, audit mécaniste};
+    \node[mstepon] (b) at (4.3,-0.95) {\textbf{Choix PoC 2}\\hallucinations VLM, ASD};
+    \node[mstep]   (c) at (7.3,0.95)  {Détecteur\\NTP};
+    \node[mstep]   (d) at (10.3,-0.95){NeuralScope\\plateforme unifiée};
+    \node[mstep]   (e) at (13.3,0.95) {Cross-dataset\\intégration finale};
+    \node[lbl] at (1.3,-0.45)  {fév. -- mars};
+    \node[lbl] at (4.3,0.45)   {mars -- avril};
+    \node[lbl] at (7.3,-0.45)  {avril};
+    \node[lbl] at (10.3,0.45)  {mai};
+    \node[lbl] at (13.3,-0.45) {juin};
+    \foreach \x in {1.3,4.3,7.3,10.3,13.3} \fill[AubayOrange] (\x,0) circle (2.6pt);
+  \end{tikzpicture}}
+
+  \vspace{0.45cm}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{itemize}
+        \item Équipe : \textbf{5 stagiaires}, 2 encadrants Lab'Innov
+        \item Rôle : recherche appliquée \textbf{+} ingénierie logicielle
+      \end{itemize}
+    \column{0.48\textwidth}
+      \begin{itemize}
+        \item 3 sujets issus du SOTA : \textbf{biais textuels} · \textbf{descriptions d'images} · \textbf{langues}
+        \item Choix PoC 2 : intérêt, SOTA déjà couvert, \textbf{équilibre d'équipe}
+      \end{itemize}
+  \end{columns}
+\end{frame}
+
+% ============================================================
+% S05 — Problématique
+% ============================================================
+\begin{frame}{La problématique}
+  \framesubtitle{Détecter et corriger à l'inférence, sous contraintes réelles}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.55\textwidth}
+      \begin{block}{Hallucination visuelle}
+        \small Détail \textbf{plausible} mais \textbf{non supporté par l'image} : objet, attribut, contexte inventé.
+      \end{block}
+      \vspace{0.2cm}
+      \begin{itemize}
+        \item Cas d'usage critiques : analyse documentaire, KYC, conformité
+        \item Un juge externe = un \textbf{2\up{e} modèle} : trop coûteux
+        \item Modèle en \textbf{zero-shot} : poids figés, pas de fine-tuning
+      \end{itemize}
+    \column{0.41\textwidth}
+      \AubayMetricCard{8 Go}{VRAM : RTX 3060}{le poste mis à ma disposition}
+      \vspace{0.25cm}
+      \AubayFocusPanel{La question d'ingénieur}{Quel signal de risque peut-on extraire \textbf{du modèle lui-même}, et quand corriger ?}
+  \end{columns}
+\end{frame}

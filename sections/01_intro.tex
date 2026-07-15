@@ -1,0 +1,41 @@
+% ============================================================
+% S01 — Titre
+% ============================================================
+\begin{frame}[plain,noframenumbering]
+  \titlepage
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[anchor=south west,inner sep=0pt]
+      at ([xshift=.44\paperwidth,yshift=0.78cm]current page.south west)
+      {\includegraphics[height=0.85cm]{media/epita_logo.png}};
+  \end{tikzpicture}
+\end{frame}
+
+% ============================================================
+% S02 — Introduction / accroche (notée)
+% ============================================================
+\begin{frame}{L'IA se trompe avec aplomb}
+  \framesubtitle{Pourquoi la fiabilité est devenue le vrai sujet}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.46\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.44\textheight,keepaspectratio]{media/kitchen.png}
+      \vspace{0.05cm}
+      \begin{alertblock}{Description générée par un VLM}
+        \small « Un plat bleu avec des fruits, notamment \textbf{des pommes et une orange}\ldots »
+      \end{alertblock}
+    \column{0.50\textwidth}
+      \vspace{0.2cm}
+      \begin{itemize}
+        \item Modèle de pointe, description \textbf{fluide et assurée}
+        \item Pourtant : \textbf{faux}
+        \item Vision-langage : décrire \textbf{ce qui n'est pas dans l'image}
+      \end{itemize}
+      \vspace{0.35cm}
+      \AubayFocusPanel{Ma mission}{Rendre les VLM \textbf{auditables} : détecter, mesurer et corriger l'hallucination visuelle, \textbf{sans réentraîner} le modèle.}
+      \vspace{0.25cm}
+      \centering
+      \AubayStatusChip{AubayOrange}{DÉTECTER}\hspace{0.2cm}
+      \AubayStatusChip{AubayTeal}{MESURER}\hspace{0.2cm}
+      \AubayStatusChip{AubaySuccess}{CORRIGER}
+  \end{columns}
+\end{frame}

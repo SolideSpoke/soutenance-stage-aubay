@@ -1,0 +1,47 @@
+% Soutenance de stage de fin d'études — Aniss Outaleb — EPITA SCIA / Aubay Innov'
+% Compile : latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
+\documentclass[aspectratio=169,11pt]{beamer}
+
+\PassOptionsToPackage{english,french}{babel}
+\usepackage{theme/aubay_poc_theme}
+\input{theme/aubay_poc_macros}
+
+\usepackage{amsmath}
+\usepackage{colortbl}
+
+% ---- Métadonnées du deck ----
+\SetProjectName{Fiabiliser les modèles vision-langage}
+\SetProjectShort{SFE 2026}
+\SetCommitteeLabel{Soutenance de stage de fin d'études}
+\SetCommitteeCode{SFE EPITA}
+\SetCurrentPhase{project}
+\SetCurrentPhaseLabel{Soutenance}
+\SetDeadline{Juillet 2026}
+\SetLogoPath{media/aubay_logo.png}
+\SetTitleAuthors{Aniss Outaleb --- EPITA, majeure SCIA}
+
+\title[Fiabiliser les modèles vision-langage]{Fiabiliser les modèles\\vision-langage}
+\subtitle{Détecter et corriger les hallucinations visuelles\\Aubay Innov' --- projet \textit{Explainable Aubay Intelligence}}
+\author{Aniss Outaleb}
+\institute{EPITA --- SCIA}
+\date{Juillet 2026}
+
+% Bloc anglais : bascule propre de la langue (césures, typographie)
+\newenvironment{enslide}{\begin{otherlanguage}{english}}{\end{otherlanguage}}
+
+% Compteur pour ne pas numéroter les backups
+\newcommand{\backupbegin}{\newcounter{finalframe}\setcounter{finalframe}{\value{framenumber}}}
+\newcommand{\backupend}{\setcounter{framenumber}{\value{finalframe}}}
+
+\begin{document}
+
+\input{sections/01_intro}
+\input{sections/02_contexte}
+\input{sections/03_demarche}
+\input{sections/04_results_en}
+\input{sections/05_industrialisation}
+\input{sections/06_recul}
+\input{sections/07_conclusion}
+\input{sections/08_backups}
+
+\end{document}

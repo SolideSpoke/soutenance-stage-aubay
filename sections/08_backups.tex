@@ -1,0 +1,187 @@
+% ============================================================
+% Backups — non numérotés, pour les Q/R
+% ============================================================
+\appendix
+\backupbegin
+
+\begin{frame}[plain,noframenumbering]
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[AubayInk] (current page.south west) rectangle (current page.north east);
+    \fill[AubayOrange] (current page.north west) rectangle ([yshift=-0.68cm]current page.north east);
+    \fill[AubayTeal] ([yshift=0.45cm]current page.south west) rectangle ([yshift=0.62cm]current page.south east);
+  \end{tikzpicture}
+  \vspace*{2.6cm}
+  \centering
+  {\usebeamerfont{section title}\textcolor{white}{Backups}\par}
+  \vspace{0.3cm}
+  {\large\textcolor{AubayStone}{Matériel de réponse aux questions}\par}
+\end{frame}
+
+% B1 — Formules ASD détaillées
+\begin{frame}{B1 : ASD, formulation complète}
+  \begin{itemize}
+    \item Vecteur de steering par couche $l$ (calibration contrastive, moyenne des différences d'activations) :
+      $\hat{v}_l = \dfrac{\bar{z}_l^{\,\text{fidèle}} - \bar{z}_l^{\,\text{halluciné}}}{\lVert \bar{z}_l^{\,\text{fidèle}} - \bar{z}_l^{\,\text{halluciné}} \rVert}$
+    \item Injection (tiers central du décodeur) : $z_l \leftarrow z_l \pm \lambda\,\hat{v}_l$
+      \begin{itemize}
+        \item $+$ : modèle renforcé $\pi^+$ (fidèle) \quad $-$ : modèle perturbé $\pi^-$ (hallucinant)
+      \end{itemize}
+    \item Décodage contrastif : $\mathrm{logit}_{ASD} = (1+\alpha)\cdot\mathrm{logit}_{\pi^+} - \alpha\cdot\mathrm{logit}_{\pi^-}$
+    \item Paramètres retenus par grid search : $\alpha = 0.8$, $\lambda = 2.0$
+  \end{itemize}
+  \vspace{0.2cm}
+  \AubayFocusPanel{Attention}{Deux opérations distinctes : l'injection agit sur les \textbf{activations}, le contraste agit sur les \textbf{logits}. Source : \texttt{src/asd\_steering.py}.}
+\end{frame}
+
+% B2 — Tableau NTP brut
+\begin{frame}{B2 : Benchmark NTP complet (LVH \textit{full text})}
+  \centering
+  {\small
+  \begin{tabular}{@{}l l c c c c@{}}
+    \toprule
+    \textbf{Modèle} & \textbf{Estim.} & \textbf{ROC-AUC} & \textbf{PR-AUC} & \textbf{Précision} & \textbf{Rappel} \\
+    \midrule
+    SmolVLM-256M    & logreg & 0.628 & 0.448 & 0.394 & 0.735 \\
+    Qwen2.5-VL-3B   & logreg & \textbf{0.645} & \textbf{0.463} & 0.387 & 0.796 \\
+    Qwen3-VL-8B     & logreg & 0.628 & 0.439 & 0.360 & \textbf{0.903} \\
+    MobileVLM-1.7B  & logreg & 0.600 & 0.414 & 0.369 & 0.795 \\
+    \bottomrule
+  \end{tabular}}
+  \vspace{0.3cm}
+
+  \begin{itemize}
+    \item \textasciitilde 1\,860 lignes par modèle, budget de 350 images, sélection de l'estimateur sur le split \textit{dev}
+    \item 22 descripteurs statistiques (comptes, moyennes, écarts-types, log-probs, FFT, croisés)
+    \item Source : \texttt{outputs/lvh\_full\_text/ntp\_training\_summary.csv}
+  \end{itemize}
+\end{frame}
+
+% B3 — Protocoles cross-eval
+\begin{frame}{B3 : Cross-dataset : deux protocoles, une conclusion}
+  \begin{itemize}
+    \item \textbf{Run d'entraînement} TextVQA$\rightarrow$TextVQA : ROC-AUC \textbf{0.765} (xgboost, n $=$ 59\,844, sélection sur dev)
+    \item \textbf{Protocole d'évaluation croisée} (\texttt{cross\_evaluation\_metrics.csv}) : TextVQA$\rightarrow$TextVQA $=$ 0.61
+    \item Écart attendu : splits et features harmonisés différemment selon le protocole
+  \end{itemize}
+  \vspace{0.2cm}
+  \AubayFocusPanel{La conclusion tient dans les deux cas}{Les deux diagonales (en-domaine) battent les deux hors-diagonales (0.484 / 0.511 $\approx$ hasard). La dépendance au domaine est robuste au choix du protocole.}
+  \vspace{0.2cm}
+  \begin{itemize}
+    \item DocVQA : exclu du comparatif : classe unique sur l'échantillon (n $=$ 30), ROC-AUC non défini
+  \end{itemize}
+\end{frame}
+
+% B4 — Heatmap complète
+\begin{frame}{B4 : Grid search ASD : cartes de chaleur}
+  \centering
+  \includegraphics[width=0.8\linewidth,height=0.75\textheight,keepaspectratio]{media/asd_param_heatmap_grid.png}
+  \par\vspace{0.1cm}
+  {\scriptsize Source : \texttt{sweeps/asd\_params/summary.csv}: $\alpha \in [0.5, 2.0]$, $\lambda \in [1.0, 5.0]$, n $=$ 50 images TextVQA.}
+\end{frame}
+
+% B5 — Architecture NeuralScope
+\begin{frame}{B5 : NeuralScope : architecture}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.5\textwidth}
+      \begin{itemize}
+        \item \textbf{Modular monolith} : une base déployable, modules PoC hermétiques
+        \item Backend \textbf{FastAPI} (Pydantic, async): un sous-module par PoC
+        \item Frontend \textbf{React + Vite + TypeScript}
+        \item Stockage \textbf{S3} pour les campagnes d'images
+        \item \textbf{Docker Compose}, support GPU explicite
+      \end{itemize}
+      \vspace{0.15cm}
+      \AubayFocusPanel{Pourquoi pas des microservices ?}{5 stagiaires, 3 PoC, 1 semestre : le monolithe modulaire évite les conflits Git et le coût d'orchestration, sans sacrifier le cloisonnement.}
+    \column{0.46\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.4\textheight,keepaspectratio]{media/dev_mode.png}\par\vspace{0.1cm}
+      \includegraphics[width=\linewidth,height=0.32\textheight,keepaspectratio]{media/neuralscope_hallucination.png}
+  \end{columns}
+\end{frame}
+
+% B6 — Table de risques complète
+\begin{frame}{B6 : Analyse de risques complète}
+  \centering
+  {\footnotesize
+  \begin{tabular}{@{}p{0.26\textwidth} l l p{0.38\textwidth}@{}}
+    \toprule
+    \textbf{Risque} & \textbf{Prob.} & \textbf{Criticité} & \textbf{Dispositif} \\
+    \midrule
+    Saturation mémoire (OOM) & Moy. & Élevée & Fallback CPU automatique, batchs réduits \\
+    Sur-filtrage du texte & Élevée & Moy. & Seuil dynamique, conservation des segments fiables \\
+    Inadéquation de domaine & Élevée & Élevée & Protocole cross-dataset $\Rightarrow$ réentraînement ciblé \\
+    Illusion de garantie & Moy. & Élevée & Score $=$ signal probabiliste, jamais une preuve (documenté) \\
+    Latence & Élevée & Moy. & \texttt{filter+asd} : correction uniquement si risque \\
+    Fuite de données & Faible & Critique & Architecture 100\,\% locale, zéro API cloud \\
+    \bottomrule
+  \end{tabular}}
+  \par\vspace{0.15cm}
+  {\scriptsize Source : rapport, §4.9, Analyse des risques.}
+\end{frame}
+
+% B7 — Quality sweep
+\begin{frame}{B7 : Robustesse aux dégradations (quality sweep)}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.5\textwidth}
+      \centering
+      \includegraphics[width=0.48\linewidth,height=0.34\textheight,keepaspectratio]{media/puppy_orig.png}\hfill
+      \includegraphics[width=0.48\linewidth,height=0.34\textheight,keepaspectratio]{media/puppy_degraded.png}
+      \par\vspace{0.1cm}
+      {\scriptsize Image dégradée $\Rightarrow$ le modèle invente « cake », « kitchen », risque NTP 0.26 $\rightarrow$ 0.88.}
+    \column{0.46\textwidth}
+      {\small
+      \begin{tabular}{@{}l c c@{}}
+        \toprule
+        \textbf{Qualité JPEG} & \textbf{Risque moyen} & \textbf{Rejets} \\
+        \midrule
+        90/100 & 0.455 & 3.9\,\% \\
+        50/100 & 0.450 & 2.5\,\% \\
+        10/100 & \textbf{0.509} & \textbf{7.5\,\%} \\
+        \bottomrule
+      \end{tabular}}
+      \vspace{0.2cm}
+      \AubayFocusPanel{Lecture}{Le risque NTP monte quand la preuve visuelle se dégrade : le signal réagit dans le bon sens. Chiffres : rapport §4.4 (tab.\ quality sweep).}
+  \end{columns}
+\end{frame}
+
+% B8 — Grille compétences <-> traces
+\begin{frame}{B8 : Compétences évaluées $\leftrightarrow$ traces du dossier}
+  \centering
+  {\footnotesize
+  \begin{tabular}{@{}p{0.3\textwidth} p{0.36\textwidth} p{0.24\textwidth}@{}}
+    \toprule
+    \textbf{Compétence (soutenance)} & \textbf{Matérialisation orale} & \textbf{Traces (annexes)} \\
+    \midrule
+    Concevoir : analyser les limites & VLM-juge abandonné, refus du « meilleur » point, cross-dataset, slide limites & A.2.1 -- A.2.5 \\
+    Concevoir : défendre la valeur & NeuralScope, surcouche réutilisable & A.3.1 -- A.3.3 \\
+    Formaliser : engagement éclairé & « Ce que je promets / refuse de promettre » & A.3.1 -- A.3.3 \\
+    Gérer un risque : dispositifs & Table de risques, fallback, seuils & A.4.1 -- A.4.6 \\
+    Agir : choix responsables & Frugalité, 100\,\% local, accessibilité & A.5.1 -- A.5.3 \\
+    Agir : anglais oral et écrit & Bloc anglais (résultats \& limites) & Executive Summary \\
+    \bottomrule
+  \end{tabular}}
+\end{frame}
+
+% B9 — Sur-filtrage : l'exemple « FRENCH »
+\begin{frame}{B9 : Quand le filtre coupe trop : l'exemple « FRENCH »}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.40\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.52\textheight,keepaspectratio]{media/sweep_textvqa_48.jpg}\par\vspace{0.1cm}
+      {\scriptsize TextVQA validation (\texttt{textvqa\_48}) : « what word does the license plate say? $\rightarrow$ french »}
+    \column{0.56\textwidth}
+      \begin{block}{Avant filtrage (285 caractères)}
+        {\scriptsize\itshape « The image shows the front of a black Honda car with a California license plate. The plate has the word \textbf{"FRENCH"} written on it in large, bold letters. The background of the plate features a blue sky with clouds\ldots »}
+      \end{block}
+      \vspace{0.1cm}
+      \begin{alertblock}{Après filtrage NTP (90 caractères)}
+        {\scriptsize\itshape « Uncertain: The image shows the front of a black Honda car with a California license plate. »}
+      \end{alertblock}
+      \vspace{0.1cm}
+      \AubayFocusPanel{Lecture}{Le filtre supprime \textbf{l'information principale} (le mot sur la plaque, vrai et lisible) : « moins de mots » $\neq$ « moins d'hallucinations ». D'où le seuil réglable et la conservation des phrases sûres.}
+  \end{columns}
+  \par\vspace{0.1cm}
+  {\scriptsize Source : \texttt{sweeps/asd\_params/results\_a0.8\_l2.0\_hl0.2.csv}, colonne \texttt{ntp\_corrected\_description}.}
+\end{frame}
+
+\backupend
