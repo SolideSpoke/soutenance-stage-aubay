@@ -20,15 +20,14 @@
       \centering
       \includegraphics[width=\linewidth,height=0.44\textheight,keepaspectratio]{media/kitchen.png}
       \vspace{0.05cm}
-      \begin{alertblock}{Description générée par un VLM}
+      \begin{alertblock}{Description générée par un VLM (modèle de vision-langage)}
         \small « Un plat bleu avec des fruits, notamment \textbf{des pommes et une orange}\ldots »
       \end{alertblock}
     \column{0.50\textwidth}
       \vspace{0.2cm}
       \begin{itemize}
-        \item Modèle de pointe, description \textbf{fluide et assurée}
-        \item Pourtant : \textbf{faux}
-        \item Vision-langage : décrire \textbf{ce qui n'est pas dans l'image}
+        \item Fluide, assuré\ldots{} et \textcolor{AubayDanger}{\textbf{faux}}
+        \item L'hallucination visuelle : décrire \textbf{ce qui n'est pas dans l'image}
       \end{itemize}
       \vspace{0.35cm}
       \AubayFocusPanel{Ma mission}{Rendre les VLM \textbf{auditables} : détecter, mesurer et corriger l'hallucination visuelle, \textbf{sans réentraîner} le modèle.}

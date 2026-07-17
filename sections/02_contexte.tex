@@ -2,7 +2,7 @@
 % S03 — Aubay / Lab'Innov
 % ============================================================
 \begin{frame}{Aubay : Lab'Innov}
-  \framesubtitle{Une ESN face au « mur de la fiabilité »}
+  \framesubtitle{Une entreprise de services du numérique (ESN) face au « mur de la fiabilité »}
   \begin{columns}[T,onlytextwidth]
     \column{0.32\textwidth}
       \AubayMetricCard{9\,000}{collaborateurs}{ESN européenne cotée}
@@ -16,10 +16,12 @@
         \item Hallucinations + boîte noire $\Rightarrow$ confiance impossible
       \end{itemize}
       \vspace{0.3cm}
-      \begin{block}{Positionnement du Lab'Innov : projet EAI}
-        \small Ne pas concurrencer les modèles fondateurs :\\
-        concevoir des \textbf{surcouches légères} de supervision et d'explicabilité.
-      \end{block}
+      \hspace*{1.45em}%
+      \begin{minipage}{\dimexpr\linewidth-1.45em\relax}
+        \begin{block}{Lab'Innov : de la recherche appliquée}
+          \small Projet \textit{Explainable Aubay Intelligence} : ne pas concurrencer les modèles fondateurs, concevoir des \textbf{surcouches légères} de supervision et d'explicabilité.
+        \end{block}
+      \end{minipage}
   \end{columns}
 \end{frame}
 
@@ -27,7 +29,7 @@
 % S04 — Équipe, mission, pivot
 % ============================================================
 \begin{frame}{Une mission qui a évolué}
-  \framesubtitle{5 stagiaires EAI : trois sujets d'explicabilité, un choix assumé}
+  \framesubtitle{5 stagiaires, trois sujets d'explicabilité, un choix assumé}
   \centering
   \resizebox{0.97\linewidth}{!}{%
   \begin{tikzpicture}[
@@ -37,9 +39,9 @@
     lbl/.style={font=\scriptsize\bfseries,text=AubaySlate}
   ]
     \draw[AubayLine,line width=2pt] (0,0) -- (14.6,0);
-    \node[mstep]   (a) at (1.3,0.95)  {État de l'art\\SAE, audit mécaniste};
-    \node[mstepon] (b) at (4.3,-0.95) {\textbf{Choix PoC 2}\\hallucinations VLM, ASD};
-    \node[mstep]   (c) at (7.3,0.95)  {Détecteur\\NTP};
+    \node[mstep]   (a) at (1.3,0.95)  {État de l'art\\interprétabilité mécaniste};
+    \node[mstepon] (b) at (4.3,-0.95) {\textbf{Choix PoC 2}\\hallucinations des VLM};
+    \node[mstep]   (c) at (7.3,0.95)  {Détecteur\\d'hallucinations (NTP)};
     \node[mstep]   (d) at (10.3,-0.95){NeuralScope\\plateforme unifiée};
     \node[mstep]   (e) at (13.3,0.95) {Cross-dataset\\intégration finale};
     \node[lbl] at (1.3,-0.45)  {fév. -- mars};
@@ -59,8 +61,8 @@
       \end{itemize}
     \column{0.48\textwidth}
       \begin{itemize}
-        \item 3 sujets issus du SOTA : \textbf{biais textuels} · \textbf{descriptions d'images} · \textbf{langues}
-        \item Choix PoC 2 : intérêt, SOTA déjà couvert, \textbf{équilibre d'équipe}
+        \item 3 sujets issus de l'état de l'art : \textbf{biais textuels} · \textbf{descriptions d'images} · \textbf{langues}
+        \item Choix PoC 2 : intérêt, sujet déjà défriché, \textbf{équilibre d'équipe}
       \end{itemize}
   \end{columns}
 \end{frame}
@@ -70,20 +72,18 @@
 % ============================================================
 \begin{frame}{La problématique}
   \framesubtitle{Détecter et corriger à l'inférence, sous contraintes réelles}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.55\textwidth}
-      \begin{block}{Hallucination visuelle}
-        \small Détail \textbf{plausible} mais \textbf{non supporté par l'image} : objet, attribut, contexte inventé.
-      \end{block}
-      \vspace{0.2cm}
-      \begin{itemize}
-        \item Cas d'usage critiques : analyse documentaire, KYC, conformité
-        \item Un juge externe = un \textbf{2\up{e} modèle} : trop coûteux
-        \item Modèle en \textbf{zero-shot} : poids figés, pas de fine-tuning
-      \end{itemize}
-    \column{0.41\textwidth}
-      \AubayMetricCard{8 Go}{VRAM : RTX 3060}{le poste mis à ma disposition}
-      \vspace{0.25cm}
-      \AubayFocusPanel{La question d'ingénieur}{Quel signal de risque peut-on extraire \textbf{du modèle lui-même}, et quand corriger ?}
-  \end{columns}
+  \centering
+  \begin{minipage}{0.82\textwidth}
+    \begin{block}{Hallucination visuelle}
+      \small Détail \textbf{plausible} mais \textbf{non supporté par l'image} : objet, attribut, contexte inventé.
+    \end{block}
+    \vspace{0.3cm}
+    \begin{itemize}
+      \item Cas d'usage critiques : analyse documentaire, vérification d'identité, conformité
+      \item Un juge externe = un \textbf{2\up{e} modèle} : trop coûteux
+      \item Modèle en \textbf{zero-shot} : poids figés, pas de réentraînement
+    \end{itemize}
+    \vspace{0.45cm}
+    \AubayFocusPanel{La question d'ingénieur}{Quel signal de risque peut-on extraire \textbf{du modèle lui-même}, et quand corriger ?}
+  \end{minipage}
 \end{frame}

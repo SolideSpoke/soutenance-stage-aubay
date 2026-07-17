@@ -3,6 +3,7 @@
 % ============================================================
 \begin{frame}{Conclusion}
   \framesubtitle{Détecter, mesurer, corriger, sans réentraîner}
+  \vspace{0.35cm}
   \begin{columns}[T,onlytextwidth]
     \column{0.48\textwidth}
       \begin{block}{Ce qui est démontré}
@@ -10,26 +11,36 @@
         \begin{itemize}
           \item Un \textbf{signal d'incertitude gratuit} existe dans les probabilités du modèle
           \item Détection + correction \textbf{à l'inférence}, sur 8 Go de VRAM
-          \item Le signal est \textbf{dépendant du domaine}, et on sait le mesurer
+          \item Le signal est \textbf{dépendant du domaine} : ROC-AUC 0.48 hors domaine, \textbf{0.765} en domaine
         \end{itemize}
       \end{block}
-      \vspace{0.15cm}
-      \begin{exampleblock}{Ce que Aubay garde}
-        \small État de l'art, pipelines d'évaluation reproductibles, NeuralScope : un socle réutilisable en mission client.
-      \end{exampleblock}
     \column{0.48\textwidth}
       \begin{block}{Perspectives}
         \small
         \begin{itemize}
-          \item Détecteurs \textbf{spécialisés par domaine} : DocVQA, accessibilité
+          \item Détecteurs \textbf{spécialisés par domaine} : documents, accessibilité
           \item Clarifier la \textbf{définition de l'hallucination} selon l'usage
-          \item Comparer les 3 régimes : filtre seul · ASD systématique · hybride
+          \item Comparer les 3 régimes : filtre seul · correction systématique · hybride
         \end{itemize}
       \end{block}
-      \vspace{0.15cm}
-      \AubayFocusPanel{Ce que le stage a fait de moi}{Un ingénieur qui défend ses choix \textbf{avec des mesures}, y compris quand la mesure dit « pas encore ».}
   \end{columns}
-  \vspace{0.15cm}
+  \vspace{0.55cm}
   \centering
-  {\normalsize\bfseries Merci, place à vos questions.}
+  \AubayStatusChip{AubayOrange}{PRODUIT REMIS : NEURALSCOPE}\hspace{0.15cm}
+  \AubayStatusChip{AubayTeal}{PIPELINES REPRODUCTIBLES}\hspace{0.15cm}
+  \AubayStatusChip{AubaySuccess}{ÉTAT DE L'ART DOCUMENTÉ}
+\end{frame}
+
+% ============================================================
+% S22 — Merci / questions (fond d'écran pendant les Q/R)
+% ============================================================
+\begin{frame}{}
+  \vspace{0.9cm}
+  \centering
+  {\usebeamerfont{title}\usebeamercolor[fg]{title}Merci de votre attention\par}
+  \vspace{0.5cm}
+  {\Large Place à vos questions\par}
+  \vspace{1.1cm}
+  \includegraphics[height=0.85cm]{media/aubay_logo.png}\hspace{1.2cm}
+  \includegraphics[height=0.85cm]{media/epita_logo.png}
 \end{frame}

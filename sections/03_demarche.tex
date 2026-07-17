@@ -6,7 +6,7 @@
 \begin{frame}{Du papier de recherche à l'arbitrage de valeur}
   \framesubtitle{Une démarche : explorer large, converger vite}
   \begin{enumerate}
-    \item \textbf{État de l'art} : interprétabilité mécaniste, SAE, \textit{circuit tracing}, hallucinations
+    \item \textbf{État de l'art} : interprétabilité mécaniste, hallucinations des VLM
     \item \textbf{PoC parallèles} : dashboard d'audit \textit{vs} effacement d'hallucinations
     \item \textbf{Arbitrage} : valeur métier, coût, démontrabilité
   \end{enumerate}
@@ -40,10 +40,12 @@
         \item Effet plafond : ni prompts ni modèles plus petits n'améliorent
       \end{itemize}
     \column{0.44\textwidth}
+      \AubayMetricCard{8 Go}{VRAM : RTX 2080}{le poste mis à ma disposition}
+      \vspace{0.2cm}
       \AubayMetricCard{< 1 \%}{de corrections déclenchées}{le juge ne « voit » presque rien}
-      \vspace{0.25cm}
+      \vspace{0.2cm}
       \begin{alertblock}{Décision}
-        \small Abandon. Passage à une intervention \textbf{intra-modèle} (white-box), au coût marginal quasi nul.
+        \small Abandon. Passage à une intervention \textbf{dans le modèle}, au coût marginal quasi nul.
       \end{alertblock}
   \end{columns}
   \AubayTraceRef{A.2.5}
@@ -88,15 +90,16 @@
 % S08bis — Pipeline NTP (schéma papier de référence)
 % ============================================================
 \begin{frame}{La pipeline NTP en détail}
-  \framesubtitle{Azachi et al., \textit{Leveraging NTPs for Efficient Hallucination Detection in VLMs}}
-  \centering
-  \includegraphics[width=0.86\linewidth,height=0.66\textheight,keepaspectratio]{media/illustration_ntp.png}
-  \vspace{0.25cm}
-
-  \centering
-  \begin{minipage}{0.86\textwidth}
-    \AubayFocusPanel{Deux flux, un classifieur}{Description NTPs (avec image) \textbf{vs} Comparative NTPs (sans image) $\rightarrow$ descripteurs statistiques $\rightarrow$ régression logistique.}
-  \end{minipage}
+  \framesubtitle{Azachi et al., \textit{Leveraging NTPs for Efficient Hallucination Detection}}
+  \begin{columns}[c,onlytextwidth]
+    \column{0.58\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.78\textheight,keepaspectratio]{media/illustration_ntp.png}
+    \column{0.38\textwidth}
+      \AubayFocusPanel{Deux flux, un classifieur}{Description NTPs (\textbf{avec} image) vs Comparative NTPs (\textbf{sans} image).\\[0.35em]
+      $\rightarrow$ descripteurs statistiques par phrase\\[0.35em]
+      $\rightarrow$ classifieur léger (régression logistique).}
+  \end{columns}
   \AubayTraceRef{A.1.1}
 \end{frame}
 
@@ -108,6 +111,7 @@
   \begin{itemize}
     \item Calibration contrastive : activations des tokens \textbf{factuels} \textit{vs} \textbf{hallucinés} (labels COCO)
     \item Vecteur de contrôle $\hat{v}_l$ injecté dans le \textbf{tiers central du décodeur} : $z_l \leftarrow z_l \pm \lambda\,\hat{v}_l$
+    \item $\alpha$ (force du contraste) et $\lambda$ (intensité) : \textbf{recherche manuelle de paramètres} (détail en annexe)
   \end{itemize}
   \vspace{0.15cm}
   \centering
@@ -173,13 +177,17 @@
     \draw[arrow] (input) -- (vlm);
     \draw[arrow] (vlm) -- (split);
     \draw[arrow] (split) -- (ntp);
-    \draw[softarrow] (ntp.south) -- node[pos=0.6,left=0.05cm,font=\scriptsize,text=AubaySuccess] {OK} (low.north);
-    \draw[softarrow] (ntp.south) -- node[pos=0.6,right=0.05cm,font=\scriptsize,text=AubayDanger] {alerte} (high.north);
+    \draw[softarrow,draw=AubaySuccess] (ntp.south) -- (low.north);
+    \draw[softarrow,draw=AubayDanger] (ntp.south) -- (high.north);
     \draw[arrow] (low) -- (kept);
     \draw[arrow] (high) -- (asd);
     \draw[arrow] (asd) -- (fixed);
     \draw[arrow] (kept.south) |- (final.west);
     \draw[arrow] (fixed.south) |- (final.east);
+    \node[draw=AubaySuccess,line width=1.6pt,rounded corners=7pt,fit=(low)(kept),inner sep=7pt,
+          label={[font=\small\bfseries,text=AubaySuccess,fill=white,inner sep=2pt]west:PISTE OK}] {};
+    \node[draw=AubayDanger,line width=1.6pt,rounded corners=7pt,fit=(high)(asd)(fixed),inner sep=7pt,
+          label={[font=\small\bfseries,text=AubayDanger,fill=white,inner sep=2pt]east:PISTE ALERTE}] {};
   \end{tikzpicture}}
   \vspace{0.18cm}
 

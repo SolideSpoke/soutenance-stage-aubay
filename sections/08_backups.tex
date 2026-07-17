@@ -71,12 +71,30 @@
   \end{itemize}
 \end{frame}
 
-% B4 — Heatmap complète
-\begin{frame}{B4 : Grid search ASD : cartes de chaleur}
-  \centering
-  \includegraphics[width=0.8\linewidth,height=0.75\textheight,keepaspectratio]{media/asd_param_heatmap_grid.png}
+% B4 — Heatmap complète + compromis (ex-S13 « refusing the best cell »)
+\begin{frame}{B4 : Grid search ASD : cartes de chaleur et compromis}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.54\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.68\textheight,keepaspectratio]{media/asd_param_heatmap_grid.png}
+    \column{0.42\textwidth}
+      \resizebox{\linewidth}{!}{%
+      \begin{tabular}{@{}l c c@{}}
+        \toprule
+         & \textbf{Rappel} & \textbf{F1} \\
+        \midrule
+        Sans ASD & 0.818 & 0.228 \\
+        \rowcolor{AubaySuccess!14}
+        \textbf{Retenu} $\alpha{=}0.8,\ \lambda{=}2.0$ & \textbf{0.818} & \textbf{0.250} \\
+        \rowcolor{AubayDanger!14}
+        « Meilleure » $\alpha{=}2.0,\ \lambda{=}5.0$ & 0.091 & 0.069 \\
+        \bottomrule
+      \end{tabular}}
+      \vspace{0.25cm}
+      \AubayFocusPanel{Le choix défendu}{La cellule « optimale » divise le rappel par 9 : un texte vidé ne contient plus d'hallucinations, mais ne dit plus rien. Refusée.}
+  \end{columns}
   \par\vspace{0.1cm}
-  {\scriptsize Source : \texttt{sweeps/asd\_params/summary.csv}: $\alpha \in [0.5, 2.0]$, $\lambda \in [1.0, 5.0]$, n $=$ 50 images TextVQA.}
+  {\scriptsize Source : \texttt{sweeps/asd\_params/summary.csv}: $\alpha \in [0.5, 2.0]$, $\lambda \in [1.0, 5.0]$, n $=$ 50 images TextVQA. Trace A.1.6.}
 \end{frame}
 
 % B5 — Architecture NeuralScope
