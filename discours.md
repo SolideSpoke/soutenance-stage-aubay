@@ -68,7 +68,7 @@ Ces données nourrissent ensuite un **classifieur léger** (un *lightweight mode
 
 Détecter, c'est bien ; corriger, c'est mieux. L'Activation Steering Decoding intervient dans les activations internes du modèle. En calibration, je fais générer le modèle sur des images annotées, j'étiquette chaque phrase comme factuelle ou hallucinée grâce aux objets de référence, et je contraste les activations internes des deux groupes de tokens. Cette différence me donne un vecteur de contrôle, que j'injecte dans le tiers central du décodeur, assez profond pour être abstrait, assez loin de la sortie pour ne pas casser la syntaxe.
 
-À l'inférence, deux voies génèrent en parallèle : une voie renforcée vers la réalité, une voie poussée vers le biais. Le décodage contrastif amplifie la première et soustrait la seconde. Deux paramètres pilotent tout ça : alpha, la force du contraste, et lambda, l'intensité de l'injection. Je les ai réglés par une recherche manuelle de paramètres, une grille complète que vous trouverez en annexe du rapport.
+À l'inférence, deux voies génèrent en parallèle : une voie renforcée vers la réalité, une voie poussée vers le biais. Le décodage contrastif amplifie ce que propose la voie réalité et soustrait ce que propose la voie biais — c'est la formule affichée en bas de la slide. Deux paramètres pilotent tout ça : alpha, la force du contraste, et lambda, l'intensité de l'injection. Je les ai réglés par une recherche manuelle de paramètres, une grille complète que vous trouverez en annexe du rapport.
 
 ## S10 : Pipeline filter+asd 
 
