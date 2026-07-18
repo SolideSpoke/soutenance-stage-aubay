@@ -36,11 +36,11 @@ Un mot de méthode :  la pastille en haut à droite des slides renvoie à la tra
 
 ## S07 : Ce que j'ai abandonné 
 
-Et la première chose que je veux vous montrer, c'est un échec.  Notre première itération, le VLM-juge, était l'approche standard de l'industrie : un second modèle relit l'image et la description, et juge. Voici le prompt que je lui donnais : comparer l'image, le titre de référence et le brouillon, et ne renvoyer que les concepts hallucinés.
+Et la première chose que je veux vous montrer, c'est un échec.  Notre première itération, le VLM-juge, était l'approche standard de l'industrie : un second modèle relit l'image et la description, compare avec la référence, et renvoie les concepts hallucinés.
 
-C'est ici que ma contrainte matérielle entre en jeu : tout devait tenir sur huit gigas de mémoire graphique, la RTX 2080 du poste mis à ma disposition pour mes recherches. J'ai mesuré cette approche, et je l'ai abandonnée, pour trois raisons. Deux passes complètes de génération par image : insoutenable sur ces huit gigas. Un signal quasi inexistant : la correction ne se déclenchait que dans moins d'un pour cent des cas. Et un effet plafond : changer de prompt ou de juge n'améliorait rien.
+C'est ici que ma contrainte matérielle entre en jeu : tout devait tenir sur huit gigas de mémoire graphique, la RTX 3070 du poste mis à ma disposition pour mes recherches. J'ai mesuré cette approche, et je l'ai abandonnée, pour trois raisons. Deux passes complètes de génération par image : insoutenable sur ces huit gigas. Un signal quasi inexistant : la correction ne se déclenchait que dans moins d'un pour cent des cas. Et un effet plafond : changer de prompt ou de juge n'améliorait rien.
 
- Savoir tuer une piste, c'est aussi de la conception. La conclusion était claire : il fallait entrer dans le modèle lui-même. Ce pivot est documenté dans le dossier, la référence est sur la slide.
+Savoir tuer une piste, c'est aussi de la conception. La conclusion était claire : il fallait entrer dans le modèle lui-même. Ce pivot est documenté dans le dossier, la référence est sur la slide.
 
 ## S08 : Détecter : NTP 
 
@@ -126,7 +126,7 @@ Les données ensuite : cent pour cent local, aucun appel d'API cloud, le disposi
 
 ## S20 : Produire en équipe 
 
-Un mot sur la fabrique. Nous avons travaillé dans un cadre Scrumban : des sprints d'une semaine hérités de Scrum, un flux Kanban sur Jira, du poker planning, des dailies, et nos comités hebdomadaires servaient de sprint reviews scientifiques. Le rôle de Scrum Master tournait chaque semaine. Le stage s'est conclu par la Journée des Stagiaires, où j'ai présenté NeuralScope aux collaborateurs d'Aubay, et par un article de blog interne.
+Un mot sur la fabrique. Nous avons travaillé dans un cadre Scrumban : des sprints d'une semaine hérités de Scrum, un flux Kanban sur Jira, du poker planning, des dailies, et nos comités hebdomadaires servaient de sprint reviews scientifiques. Le rôle de Scrum Master tournait chaque semaine. Le stage s'est conclu par la Journée des Stagiaires, où j'ai présenté NeuralScope aux collaborateurs d'Aubay, et par un article de blog interne. Le produit a également été présenté à un client d'Aubay, Carrefour, très intéressé par ces sujets : ils rencontrent eux-mêmes des difficultés à générer des descriptions textuelles de produits fiables.
 
 Et mon axe de progrès, je l'assume devant vous : la synchronisation. Sur un travail en binôme, il m'est arrivé d'avancer trop vite seul. Les rituels agiles m'ont appris à exposer mes choix avant de les coder, c'est probablement l'apprentissage le plus durable du stage.
 

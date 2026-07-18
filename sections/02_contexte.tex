@@ -19,7 +19,7 @@
       \hspace*{1.45em}%
       \begin{minipage}{\dimexpr\linewidth-1.45em\relax}
         \begin{block}{Lab'Innov : de la recherche appliquée}
-          \small Projet \textit{Explainable Aubay Intelligence} : ne pas concurrencer les modèles fondateurs, concevoir des \textbf{surcouches légères} de supervision et d'explicabilité.
+          \small Projet \textit{Explainable Aubay Intelligence} : des \textbf{surcouches légères} de supervision, pas de concurrence aux modèles fondateurs.
         \end{block}
       \end{minipage}
   \end{columns}
@@ -31,38 +31,39 @@
 \begin{frame}{Une mission qui a évolué}
   \framesubtitle{5 stagiaires, trois sujets d'explicabilité, un choix assumé}
   \centering
-  \resizebox{0.97\linewidth}{!}{%
+  \vspace{0.2cm}
+  \resizebox{\linewidth}{!}{%
   \begin{tikzpicture}[
-    mstep/.style={rounded corners=4pt,draw=AubayLine,fill=white,minimum height=1.05cm,
-                 text width=2.45cm,align=center,font=\small},
+    mstep/.style={rounded corners=4pt,draw=AubayLine,fill=white,minimum height=1.15cm,
+                 text width=2.15cm,align=center,font=\small},
     mstepon/.style={mstep,draw=AubayOrange,fill=AubayOrange!10,font=\small\bfseries},
     lbl/.style={font=\scriptsize\bfseries,text=AubaySlate}
   ]
-    \draw[AubayLine,line width=2pt] (0,0) -- (14.6,0);
-    \node[mstep]   (a) at (1.3,0.95)  {État de l'art\\interprétabilité mécaniste};
-    \node[mstepon] (b) at (4.3,-0.95) {\textbf{Choix PoC 2}\\hallucinations des VLM};
-    \node[mstep]   (c) at (7.3,0.95)  {Détecteur\\d'hallucinations (NTP)};
-    \node[mstep]   (d) at (10.3,-0.95){NeuralScope\\plateforme unifiée};
-    \node[mstep]   (e) at (13.3,0.95) {Cross-dataset\\intégration finale};
-    \node[lbl] at (1.3,-0.45)  {fév. -- mars};
-    \node[lbl] at (4.3,0.45)   {mars -- avril};
-    \node[lbl] at (7.3,-0.45)  {avril};
-    \node[lbl] at (10.3,0.45)  {mai};
-    \node[lbl] at (13.3,-0.45) {juin};
-    \foreach \x in {1.3,4.3,7.3,10.3,13.3} \fill[AubayOrange] (\x,0) circle (2.6pt);
+    \draw[AubayLine,line width=2pt] (0,0) -- (12.8,0);
+    \node[mstep]   (a) at (0.9,0.95)   {État de l'art};
+    \node[mstepon] (b) at (3.65,0.95)  {\textbf{Choix PoC 2}\\hallucinations};
+    \node[mstep]   (c) at (6.4,0.95)   {Détecteur\\NTP};
+    \node[mstep]   (d) at (9.15,0.95)  {NeuralScope};
+    \node[mstep]   (e) at (11.9,0.95)  {Cross-dataset};
+    \node[lbl] at (0.9,-0.42)   {fév. -- mars};
+    \node[lbl] at (3.65,-0.42)  {mars -- avril};
+    \node[lbl] at (6.4,-0.42)   {avril};
+    \node[lbl] at (9.15,-0.42)  {mai};
+    \node[lbl] at (11.9,-0.42)  {juin};
+    \foreach \x in {0.9,3.65,6.4,9.15,11.9} \fill[AubayOrange] (\x,0) circle (2.6pt);
   \end{tikzpicture}}
 
-  \vspace{0.45cm}
+  \vspace{0.55cm}
   \begin{columns}[T,onlytextwidth]
     \column{0.48\textwidth}
       \begin{itemize}
-        \item Équipe : \textbf{5 stagiaires}, 2 encadrants Lab'Innov
-        \item Rôle : recherche appliquée \textbf{+} ingénierie logicielle
+        \item \textbf{5 stagiaires} · 2 encadrants Lab'Innov
+        \item Recherche appliquée $+$ ingénierie logicielle
       \end{itemize}
     \column{0.48\textwidth}
       \begin{itemize}
-        \item 3 sujets issus de l'état de l'art : \textbf{biais textuels} · \textbf{descriptions d'images} · \textbf{langues}
-        \item Choix PoC 2 : intérêt, sujet déjà défriché, \textbf{équilibre d'équipe}
+        \item 3 sujets : \textbf{biais} · \textbf{descriptions d'images} · \textbf{langues}
+        \item Choix PoC 2 : intérêt · déjà défriché · \textbf{équilibre}
       \end{itemize}
   \end{columns}
 \end{frame}
@@ -72,18 +73,19 @@
 % ============================================================
 \begin{frame}{La problématique}
   \framesubtitle{Détecter et corriger à l'inférence, sous contraintes réelles}
+  \vspace{0.1cm}
   \centering
-  \begin{minipage}{0.82\textwidth}
+  \begin{minipage}{0.88\textwidth}
     \begin{block}{Hallucination visuelle}
-      \small Détail \textbf{plausible} mais \textbf{non supporté par l'image} : objet, attribut, contexte inventé.
+      Détail \textbf{plausible} mais \textbf{non supporté par l'image} : objet, attribut, contexte inventé.
     \end{block}
-    \vspace{0.3cm}
-    \begin{itemize}
-      \item Cas d'usage critiques : analyse documentaire, vérification d'identité, conformité
-      \item Un juge externe = un \textbf{2\up{e} modèle} : trop coûteux
-      \item Modèle en \textbf{zero-shot} : poids figés, pas de réentraînement
-    \end{itemize}
     \vspace{0.45cm}
-    \AubayFocusPanel{La question d'ingénieur}{Quel signal de risque peut-on extraire \textbf{du modèle lui-même}, et quand corriger ?}
+    \begin{itemize}\setlength{\itemsep}{0.5em}
+      \item Cas critiques : analyse documentaire · identité · conformité
+      \item Juge externe $=$ 2\up{e} modèle : \textbf{trop coûteux}
+      \item \textbf{Zero-shot} : poids figés
+    \end{itemize}
+    \vspace{0.55cm}
+    \AubayFocusPanel{La question d'ingénieur}{\normalsize Quel signal de risque extraire \textbf{du modèle lui-même}, et quand corriger ?}
   \end{minipage}
 \end{frame}

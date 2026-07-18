@@ -11,10 +11,10 @@
       \begin{exampleblock}{La solution promet}
         \small
         \begin{itemize}
-          \item Un \textbf{signal de risque} phrase par phrase
-          \item Coût marginal quasi nul (sous-produit de la génération)
-          \item \textbf{100 \% local}: aucune donnée ne sort
-          \item Zéro réentraînement du modèle client
+          \item \textbf{Signal de risque} phrase par phrase
+          \item Coût marginal quasi nul
+          \item \textbf{100 \% local}
+          \item Zéro réentraînement
         \end{itemize}
       \end{exampleblock}
     \column{0.48\textwidth}
@@ -22,15 +22,15 @@
         \small
         \begin{itemize}
           \item Une \textbf{garantie d'exactitude}
-          \item Un déploiement sans \textbf{calibration métier} (cross-dataset !)
-          \item Le remplacement de la revue humaine
+          \item Un déploiement sans \textbf{calibration métier}
+          \item Le remplacement de la \textbf{revue humaine}
         \end{itemize}
       \end{alertblock}
   \end{columns}
   \vspace{0.35cm}
   \centering
   \begin{minipage}{0.84\textwidth}
-    \AubayFocusPanel{Posture défendue en comité}{Vendre un \textbf{outil de priorisation de la revue humaine}. Le jour où on le vend comme un label de vérité, on recrée le problème qu'on voulait résoudre.}
+    \AubayFocusPanel{Posture défendue en comité}{Un \textbf{outil de priorisation de la revue humaine} — jamais un label de vérité.}
   \end{minipage}
 \end{frame}
 
@@ -42,20 +42,14 @@
   \begin{columns}[T,onlytextwidth]
     \column{0.52\textwidth}
       \centering
-      \includegraphics[width=\linewidth,height=0.62\textheight,keepaspectratio]{media/neuralscope_home.png}
+      \includegraphics[width=\linewidth,height=0.68\textheight,keepaspectratio]{media/neuralscope_home.png}
     \column{0.44\textwidth}
-      \begin{itemize}
+      \vspace{0.4cm}
+      \begin{itemize}\setlength{\itemsep}{0.5em}
         \item \small Plateforme unifiée des \textbf{3 PoC} de l'équipe
         \item \small \textbf{Monolithe modulaire} : une base déployable, modules hermétiques
         \item \small FastAPI / React TS / Docker
       \end{itemize}
-      \vspace{0.15cm}
-      \hspace*{1.45em}%
-      \begin{minipage}{\dimexpr\linewidth-1.45em\relax}
-        \begin{block}{Ma contribution}
-          \footnotesize Module d'explicabilité complet : chargement modèle, génération, extraction NTP, entraînement des classifieurs.
-        \end{block}
-      \end{minipage}
   \end{columns}
   \AubayTraceRef{A.5.2}
 \end{frame}

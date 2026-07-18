@@ -26,26 +26,20 @@
   \begin{columns}[T,onlytextwidth]
     \column{0.50\textwidth}
       \begin{block}{L'idée naïve}
-        \small Un 2\up{e} VLM relit l'image et la description, et « juge » les passages inventés.
+        \small Un 2\up{e} VLM relit et « juge » la description.
       \end{block}
-      \vspace{0.2cm}
-      {\scriptsize\ttfamily\raggedright
-        « Compare the image, the reference title, and the draft.\\
-        Return ONLY a comma-separated list of\\
-        hallucinated concepts. »\par}
-      \vspace{0.2cm}
+      \vspace{0.25cm}
       \begin{itemize}
         \item \textbf{2 passes} de génération par image
-        \item Insoutenable sur GPU 8 Go
-        \item Effet plafond : ni prompts ni modèles plus petits n'améliorent
+        \item \textbf{Effet plafond} : prompts, juges plus petits
       \end{itemize}
     \column{0.44\textwidth}
-      \AubayMetricCard{8 Go}{VRAM : RTX 2080}{le poste mis à ma disposition}
+      \AubayMetricCard{8 Go}{VRAM : RTX 3070}{le poste mis à ma disposition}
       \vspace{0.2cm}
       \AubayMetricCard{< 1 \%}{de corrections déclenchées}{le juge ne « voit » presque rien}
       \vspace{0.2cm}
       \begin{alertblock}{Décision}
-        \small Abandon. Passage à une intervention \textbf{dans le modèle}, au coût marginal quasi nul.
+        \small Abandon $\rightarrow$ intervention \textbf{dans le modèle}
       \end{alertblock}
   \end{columns}
   \AubayTraceRef{A.2.5}
@@ -96,9 +90,9 @@
       \centering
       \includegraphics[width=\linewidth,height=0.78\textheight,keepaspectratio]{media/illustration_ntp.png}
     \column{0.38\textwidth}
-      \AubayFocusPanel{Deux flux, un classifieur}{Description NTPs (\textbf{avec} image) vs Comparative NTPs (\textbf{sans} image).\\[0.35em]
-      $\rightarrow$ descripteurs statistiques par phrase\\[0.35em]
-      $\rightarrow$ classifieur léger (régression logistique).}
+      \AubayFocusPanel{Deux flux, un classifieur}{NTPs \textbf{avec} image vs \textbf{sans} image\\[0.35em]
+      $\rightarrow$ descripteurs par phrase\\[0.35em]
+      $\rightarrow$ classifieur léger.}
   \end{columns}
   \AubayTraceRef{A.1.1}
 \end{frame}
@@ -109,9 +103,9 @@
 \begin{frame}{Corriger : piloter les activations du modèle}
   \framesubtitle{ASD : Activation Steering Decoding}
   \begin{itemize}
-    \item Calibration contrastive : activations des tokens \textbf{factuels} \textit{vs} \textbf{hallucinés} (labels COCO)
-    \item Vecteur de contrôle $\hat{v}_l$ injecté dans le \textbf{tiers central du décodeur} : $z_l \leftarrow z_l \pm \lambda\,\hat{v}_l$
-    \item $\alpha$ (force du contraste) et $\lambda$ (intensité) : \textbf{recherche manuelle de paramètres} (détail en annexe)
+    \item Calibration contrastive : tokens \textbf{factuels} \textit{vs} \textbf{hallucinés}
+    \item Vecteur $\hat{v}_l$ injecté au \textbf{tiers central du décodeur} : $z_l \leftarrow z_l \pm \lambda\,\hat{v}_l$
+    \item $\alpha$ (contraste), $\lambda$ (intensité) : \textbf{recherche manuelle}
   \end{itemize}
   \vspace{0.15cm}
   \centering

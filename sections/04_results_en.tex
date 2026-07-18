@@ -44,11 +44,11 @@
   \begin{columns}[T,onlytextwidth]
     \column{0.48\textwidth}
       \begin{block}{Selected: Qwen2.5-VL-3B}
-        \small Best ROC-AUC \textbf{and} PR-AUC: the most reliable separation, within the 8 GB budget.
+        \small Best ROC-AUC \textbf{and} PR-AUC · fits the 8 GB budget
       \end{block}
     \column{0.48\textwidth}
       \begin{alertblock}{Why not the 8B model?}
-        \small Recall 0.903 comes with heavy over-flagging and a prohibitive runtime, not worth it.
+        \small Recall 0.903 — but heavy over-flagging, prohibitive runtime
       \end{alertblock}
   \end{columns}
   \end{enslide}
@@ -84,7 +84,7 @@
         \item In-domain, specialised: \textbf{0.765}
       \end{itemize}
     \column{0.48\textwidth}
-      \AubayFocusPanel{What it means}{The probabilistic signature of a hallucination is \textbf{domain-dependent}. Not a failure: a design rule: \textbf{one detector per domain}.}
+      \AubayFocusPanel{What it means}{Hallucination signatures are \textbf{domain-dependent} $\Rightarrow$ design rule: \textbf{one detector per domain}.}
   \end{columns}
   \end{enslide}
   \AubayTraceRef{A.4.4}
@@ -126,10 +126,10 @@
     \toprule
     \textbf{Limit / risk} & \textbf{Mitigation in place} \\
     \midrule
-    ROC-AUC $\approx$ 0.645 on generalist images & Positioned as a \textbf{triage signal} for human review, never as ground truth \\
-    Over-flagging (recall-oriented) & Tunable threshold; keep safest sentences instead of deleting \\
-    Domain dependence & Cross-dataset protocol $\Rightarrow$ retrain per business domain \\
-    Definition of "hallucination" & Documented bias toward strict factuality (previous slide) \\
+    ROC-AUC $\approx$ 0.645 on generalist images & \textbf{Triage signal} for human review — not ground truth \\
+    Over-flagging (recall-oriented) & Tunable threshold · keep safest sentences \\
+    Domain dependence & Cross-dataset protocol $\Rightarrow$ retrain per domain \\
+    Definition of "hallucination" & Documented bias: strict factuality (previous slide) \\
     \bottomrule
   \end{tabular}}
   \vspace{0.3cm}
