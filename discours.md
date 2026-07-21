@@ -12,7 +12,7 @@ Ma mission tenait en une phrase : rendre ces modèles auditables. Détecter l'ha
 
 D'abord, le contexte. Aubay est une ESN, une entreprise de services du numérique, cotée, environ neuf mille collaborateurs en Europe, six cent un virgule six millions d'euros de chiffre d'affaires en 2025. Ses clients, banques, assurances, secteur public, lui confient des systèmes critiques.
 
-Et sur l'IA générative, ces clients butent tous sur le même obstacle, ce qu'on appelle en interne le mur de la fiabilité : des modèles impressionnants, mais imprévisibles et opaques. Le Lab'Innov, où j'ai travaillé, fait de la recherche appliquée, avec le projet Explainable Aubay Intelligence. Son pari est lucide : on ne concurrence pas les géants sur l'entraînement de modèles fondateurs. On construit des surcouches légères de supervision, qui se branchent sur l'existant. Mon stage est exactement là-dedans.
+Et sur l'IA générative, ces clients butent tous sur le même obstacle, ce qu'on appelle en interne le mur de la fiabilité : des modèles impressionnants, mais imprévisibles et opaques. Le cœur du métier d'Aubay, c'est le conseil : des consultants en mission chez ces clients. À côté de cette activité principale, le groupe entretient un laboratoire, le Lab'Innov, où j'ai travaillé : là, on ne fait pas de la prestation, on fait de la recherche appliquée, avec le projet Explainable Aubay Intelligence. Son pari est lucide : on ne concurrence pas les géants sur l'entraînement de modèles fondateurs. On construit des surcouches légères de supervision, qui se branchent sur l'existant. Mon stage est exactement là-dedans.
 
 ## S04 : Équipe et mission 
 
@@ -66,7 +66,7 @@ Ces données nourrissent ensuite un **classifieur léger** (un *lightweight mode
 
 ## S09 : Corriger : ASD 
 
-Détecter, c'est bien ; corriger, c'est mieux. L'Activation Steering Decoding intervient dans les activations internes du modèle. En calibration, je fais générer le modèle sur des images annotées, j'étiquette chaque phrase comme factuelle ou hallucinée grâce aux objets de référence, et je contraste les activations internes des deux groupes de tokens. Cette différence me donne un vecteur de contrôle, que j'injecte dans le tiers central du décodeur, assez profond pour être abstrait, assez loin de la sortie pour ne pas casser la syntaxe.
+Détecter, c'est bien ; corriger, c'est mieux. L'Activation Steering Decoding intervient dans les activations internes du modèle. En calibration, je fais générer le modèle sur des images annotées, chaque phrase est etiquté comme factuelle ou hallucinée, et je contraste les activations internes des deux groupes de tokens. Cette différence me donne un vecteur de contrôle, que j'injecte dans le tiers central du décodeur, assez profond pour être abstrait, assez loin de la sortie pour ne pas casser la syntaxe.
 
 À l'inférence, deux voies génèrent en parallèle : une voie renforcée vers la réalité, une voie poussée vers le biais. Le décodage contrastif amplifie ce que propose la voie réalité et soustrait ce que propose la voie biais — c'est la formule affichée en bas de la slide. Deux paramètres pilotent tout ça : alpha, la force du contraste, et lambda, l'intensité de l'injection. Je les ai réglés par une recherche manuelle de paramètres, une grille complète que vous trouverez en annexe du rapport.
 
@@ -78,25 +78,26 @@ Voilà pour la conception. I will now switch to English for the results and the 
 
 ## S11 :  Evaluation protocol
 
-Does it actually work? I used three corpora, covering three different kinds of hallucination, and you can see a sample of each on screen. MSCOCO, natural scenes: the failure mode is inventing objects. LV-Hallucinations, finely labelled descriptions: colors, textures, context. And TextVQA, documents, signs and labels, where hallucinating means misreading text: the closest to Aubay's business use cases.
+Does it actually work? To evaluate I used three corpora, covering three different kinds of hallucination. MSCOCO, natural scenes: the failure mode is inventing objects. LV-Hallucinations, finely labelled descriptions: colors, textures, context. And TextVQA, documents, signs and labels, where hallucinating means misreading text: the closest to Aubay's business use cases.
 
 Detection is evaluated sentence by sentence. The headline metric is ROC-AUC: it measures how well the detector separates hallucinated sentences from correct ones. Zero point five means a coin flip; one would be a perfect separation.
 
 ## S12 :  Model benchmark
 
-First result: I benchmarked the detector on four different generator models, on the LV-Hallucinations test split. The task was to find a model that would both hallucinate enough and let us detect it reliably. Our first intuition was to pick small, fast models, expecting more errors in exchange for speed. It turned out the opposite: small models are trained to take no risk, they produce very short, cautious descriptions, and therefore hallucinate very little. In the end, Qwen2.5-VL-3B comes out on top on both ROC-AUC, at zero point six four five, and PR-AUC: the most reliable separation within the memory budget. It became our reference model, a choice made with numbers, not intuition.
+First result: I benchmarked the detector on four different generator models, on the LV-Hallucinations test split. The task was to find a model that would both hallucinate enough and let us detect it reliably. Our first intuition was to pick small, fast models, expecting more errors in exchange for speed. It turned out the opposite: small models are trained to take no risk, they produce very short, cautious descriptions, and therefore hallucinate very little. In the end, Qwen2.5-VL-3B comes out on top on both ROC-AUC, at zero point six four five, and PR-AUC: the most reliable separation within the memory budget. It became our reference model.
 
-One interesting trap here: the eight-billion-parameter model reaches a recall of zero point nine. Tempting. But it over-flags massively, and its runtime is prohibitive, for an AUC that is actually lower.
+One interesting thing: the eight-billion-parameter model reaches a recall of zero point nine. Tempting. But it over-flags massively, and its runtime is prohibitive, for an AUC that is actually lower.
 
 ## S14 :  Cross-dataset
 
-Then I asked the question : does the detector travel across domains?  Mostly, no, and that is the key finding of this internship. Trained on generalist images, tested on documents: zero point four eight, a coin flip. The other way around: zero point five one. But retrained inside the document domain, the same method jumps to zero point seven six five.
+Then I asked the question : does the detector travel across domains?  Mostly, no, and that is the key finding of this internship. 
+Moslty no. When we train on generalist images and test on documents and the other way around it showed poor performances. But when we retrain the detector on the target domain, the performance jumps significantly. This is a clear signal that this method of hallucination detection is domain-dependent.
 
-The probabilistic signature of a hallucination is domain-dependent: inventing a texture and misreading a word are two different failures. This is not a weakness of the method, it is a design rule: one detector per domain. And it tells us exactly where to invest next.
+This is not a weakness of the method, it is a design rule: one detector per domain. And it tells us exactly where to invest next.
 
 ## S15 :  Fabrication vs. context
 
-But there is a deeper limitation: our score does not distinguish between two very different things: fabrication, and world knowledge. Here is a real case from our evaluation run: a fairground carousel. The model adds context: a popular attraction in many countries, with traditional European designs. That is world knowledge, and it is even correct: look closely, the painted panels show Venetian scenes. Yet our pipeline scores it one point zero. One hundred percent hallucination.
+But there is a deeper limitation: our score does not distinguish between two very different things: fabrication, and world knowledge. Here is a real case from our evaluation run: a fairground carousel. The model adds context: a popular attraction in many countries, with traditional European designs. That is world knowledge, and it is even correct. Yet our pipeline flags it as hallucinated.
 
 Why does this happen? Because our strict metric compares the generated words to a reference caption: whatever is not in the reference counts as hallucinated. World knowledge and historical context get punished just like a fabricated object would.  And we made that choice deliberately: we push the model toward what the pixels strictly support. For compliance, that is the right bias. But for accessibility, describing an archive photo to a visually impaired user, that context is precisely the value. Same sentence, two verdicts: the definition of a hallucination itself must be part of the product conversation.
 
@@ -104,11 +105,11 @@ Why does this happen? Because our strict metric compares the generated words to 
 
 Let me state the limits plainly. An AUC of zero point six four five on generalist images is a moderate signal: useful for triage, not for truth.  Each risk on this table has a concrete mitigation device, and you can read them: tunable threshold against over-flagging, keeping the safest sentences instead of deleting, retraining per domain.
 
- My recommendation for the next iteration is therefore not a bigger model: it is domain-specific training, on document and accessibility corpora.
+My recommendation for the next iteration is therefore not a bigger model: it is domain-specific training, on document and accessibility corpora.
 
 ## S18 : Engagement éclairé 
 
-Ces limites posées, reste la question qu'on m'a posée en comité : qu'est-ce qu'on peut promettre à un client ? Ma réponse tient dans ce tableau, et vous pouvez le lire.  En une phrase : c'est un outil de priorisation de la revue humaine, et c'est comme ça qu'il doit se vendre. Le jour où on le présente comme un label de vérité, on recrée exactement le problème qu'on voulait résoudre. Un engagement éclairé vaut mieux qu'une démo magique.
+Ces limites posées, reste la question qu'on m'a posée en comité : qu'est-ce qu'on peut promettre à un client ? Ma réponse tient dans ce tableau, et vous pouvez le lire.  En une phrase : c'est un outil de priorisation de la revue humaine, et c'est comme ça qu'il doit se vendre. Le jour où on le présente comme un label de vérité, on recrée exactement le problème qu'on voulait résoudre. 
 
 ## S17 : Industrialiser : NeuralScope 
 
@@ -134,7 +135,7 @@ Et mon axe de progrès, je l'assume devant vous : la synchronisation. Sur un tra
 
 Je conclus. Ce stage démontre trois choses. Un : il existe un signal d'incertitude gratuit dans les probabilités du modèle, exploitable par un simple classifieur. Deux : on peut détecter et corriger des hallucinations à l'inférence, sans réentraînement, sur huit gigas de mémoire. Trois : ce signal dépend du domaine, on l'a mesuré, et cela dicte les perspectives : des détecteurs spécialisés par domaine, la comparaison des trois régimes d'usage de la pipeline, et une définition de l'hallucination clarifiée usage par usage.
 
-Ce que le stage laisse à Aubay tient dans ces trois mots-clés, et NeuralScope en est le produit concret, remis et réutilisable en mission. Ce qu'il a fait de moi, c'est un ingénieur qui défend ses choix avec des mesures, y compris quand la mesure dit « pas encore ».
+Ce que le stage laisse à Aubay tient dans ces trois mots-clés, et NeuralScope en est le produit concret, remis et réutilisable en mission. Ce qu'il a fait de moi, c'est un ingénieur qui défend ses choix avec des mesures.
 
 ## S22 : Merci / questions 
 
