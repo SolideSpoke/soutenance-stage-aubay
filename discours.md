@@ -30,7 +30,7 @@ D'où ma vraie question d'ingénieur : quel signal de risque peut-on extraire du
 
 ## S06 : Démarche : de l'état de l'art à l'arbitrage 
 
-Ma démarche en trois temps. D'abord explorer large, avec l'état de l'art sur l'interprétabilité mécaniste et les hallucinations. Ensuite, prototyper en parallèle : l'équipe a monté plusieurs preuves de concept. Enfin, arbitrer : c'est le document que vous voyez, présenté en comité : pour chaque PoC, sa valeur métier, son coût, sa démontrabilité. Mon critère de convergence était simple : une méthode intégrable chez un client vaut plus qu'une méthode parfaite en laboratoire.
+Ma démarche en trois temps. D'abord explorer large : c'est l'état de l'art que je viens d'évoquer. Ensuite, prototyper en parallèle : l'équipe a monté plusieurs preuves de concept. Enfin, arbitrer : un document présenté en comité, qui évalue pour chaque PoC sa valeur métier, son coût, sa démontrabilité. Mon critère de convergence était simple : une méthode intégrable chez un client vaut plus qu'une méthode parfaite en laboratoire.
 
 Un mot de méthode :  la pastille en haut à droite des slides renvoie à la trace correspondante dans les annexes de mon dossier, pour que chaque affirmation soit vérifiable sur pièces.
 
@@ -40,7 +40,7 @@ Et la première chose que je veux vous montrer, c'est un échec.  Notre premièr
 
 C'est ici que ma contrainte matérielle entre en jeu : tout devait tenir sur huit gigas de mémoire graphique, la RTX 3070 du poste mis à ma disposition pour mes recherches. J'ai mesuré cette approche, et je l'ai abandonnée, pour trois raisons. Deux passes complètes de génération par image : insoutenable sur ces huit gigas. Un signal quasi inexistant : la correction ne se déclenchait que dans moins d'un pour cent des cas. Et un effet plafond : changer de prompt ou de juge n'améliorait rien.
 
-Savoir tuer une piste, c'est aussi de la conception. La conclusion était claire : il fallait entrer dans le modèle lui-même. Ce pivot est documenté dans le dossier, la référence est sur la slide.
+Savoir tuer une piste, c'est aussi de la conception. [IND-1] La conclusion était claire : il fallait entrer dans le modèle lui-même. Ce pivot est documenté dans le dossier, la référence est sur la slide.
 
 ## S08 : Détecter : NTP 
 
@@ -68,48 +68,48 @@ Ces données nourrissent ensuite un **classifieur léger** (un *lightweight mode
 
 Détecter, c'est bien ; corriger, c'est mieux. L'Activation Steering Decoding intervient dans les activations internes du modèle. En calibration, je fais générer le modèle sur des images annotées, chaque phrase est etiquté comme factuelle ou hallucinée, et je contraste les activations internes des deux groupes de tokens. Cette différence me donne un vecteur de contrôle, que j'injecte dans le tiers central du décodeur, assez profond pour être abstrait, assez loin de la sortie pour ne pas casser la syntaxe.
 
-À l'inférence, deux voies génèrent en parallèle : une voie renforcée vers la réalité, une voie poussée vers le biais. Le décodage contrastif amplifie ce que propose la voie réalité et soustrait ce que propose la voie biais — c'est la formule affichée en bas de la slide. Deux paramètres pilotent tout ça : alpha, la force du contraste, et lambda, l'intensité de l'injection. Je les ai réglés par une recherche manuelle de paramètres, une grille complète que vous trouverez en annexe du rapport.
+À l'inférence, deux voies génèrent en parallèle : une voie renforcée vers la réalité, une voie poussée vers le biais. Le décodage contrastif amplifie ce que propose la voie réalité et soustrait ce que propose la voie biais : c'est la formule affichée en bas de la slide. Deux paramètres pilotent tout ça : alpha, la force du contraste, et lambda, l'intensité de l'injection. Je les ai réglés par une recherche manuelle de paramètres, une grille complète que vous trouverez en annexe du rapport.
 
 ## S10 : Pipeline filter+asd 
 
 L'architecture finale assemble les deux briques, et la logique tient en une phrase : on ne corrige que quand c'est risqué. Le VLM génère, le NTP score chaque phrase ; risque faible, on conserve tel quel ; risque élevé, l'ASD ré-ancre la phrase dans l'image. Le modèle reste en zero-shot, l'intervention est ciblée, le coût marginal quasi nul.
 
-Voilà pour la conception. I will now switch to English for the results and the limitations of this work.
+Voilà pour la conception. I will now switch to English for the results and the limitations of this work. [IND-6]
 
-## S11 :  Evaluation protocol
+## S11 : Evaluation protocol [EN]
 
 Does it actually work? To evaluate I used three corpora, covering three different kinds of hallucination. MSCOCO, natural scenes: the failure mode is inventing objects. LV-Hallucinations, finely labelled descriptions: colors, textures, context. And TextVQA, documents, signs and labels, where hallucinating means misreading text: the closest to Aubay's business use cases.
 
 Detection is evaluated sentence by sentence. The headline metric is ROC-AUC: it measures how well the detector separates hallucinated sentences from correct ones. Zero point five means a coin flip; one would be a perfect separation.
 
-## S12 :  Model benchmark
+## S12 : Model benchmark [EN]
 
 First result: I benchmarked the detector on four different generator models, on the LV-Hallucinations test split. The task was to find a model that would both hallucinate enough and let us detect it reliably. Our first intuition was to pick small, fast models, expecting more errors in exchange for speed. It turned out the opposite: small models are trained to take no risk, they produce very short, cautious descriptions, and therefore hallucinate very little. In the end, Qwen2.5-VL-3B comes out on top on both ROC-AUC, at zero point six four five, and PR-AUC: the most reliable separation within the memory budget. It became our reference model.
 
-One interesting thing: the eight-billion-parameter model reaches a recall of zero point nine. Tempting. But it over-flags massively, and its runtime is prohibitive, for an AUC that is actually lower.
+One interesting thing: the eight-billion-parameter model reaches a recall of zero point nine. Tempting. But it over-flags more than any other model, with the lowest precision of the four, its runtime is prohibitive, and its AUC is actually lower.
 
-## S14 :  Cross-dataset
+## S14 : Cross-dataset [EN]
 
 Then I asked the question : does the detector travel across domains?  Mostly, no, and that is the key finding of this internship. 
 Moslty no. When we train on generalist images and test on documents and the other way around it showed poor performances. But when we retrain the detector on the target domain, the performance jumps significantly. This is a clear signal that this method of hallucination detection is domain-dependent.
 
 This is not a weakness of the method, it is a design rule: one detector per domain. And it tells us exactly where to invest next.
 
-## S15 :  Fabrication vs. context
+## S15 : Fabrication vs. context [EN]
 
 But there is a deeper limitation: our score does not distinguish between two very different things: fabrication, and world knowledge. Here is a real case from our evaluation run: a fairground carousel. The model adds context: a popular attraction in many countries, with traditional European designs. That is world knowledge, and it is even correct. Yet our pipeline flags it as hallucinated.
 
 Why does this happen? Because our strict metric compares the generated words to a reference caption: whatever is not in the reference counts as hallucinated. World knowledge and historical context get punished just like a fabricated object would.  And we made that choice deliberately: we push the model toward what the pixels strictly support. For compliance, that is the right bias. But for accessibility, describing an archive photo to a visually impaired user, that context is precisely the value. Same sentence, two verdicts: the definition of a hallucination itself must be part of the product conversation.
 
-## S16 :  Limits I stand behind
+## S16 : Limits I stand behind [EN]
 
 Let me state the limits plainly. An AUC of zero point six four five on generalist images is a moderate signal: useful for triage, not for truth.  Each risk on this table has a concrete mitigation device, and you can read them: tunable threshold against over-flagging, keeping the safest sentences instead of deleting, retraining per domain.
 
-My recommendation for the next iteration is therefore not a bigger model: it is domain-specific training, on document and accessibility corpora.
+My recommendation for the next iteration is therefore not a bigger model: it is domain-specific training, on document and accessibility corpora. [IND-1]
 
 ## S18 : Engagement éclairé 
 
-Ces limites posées, reste la question qu'on m'a posée en comité : qu'est-ce qu'on peut promettre à un client ? Ma réponse tient dans ce tableau, et vous pouvez le lire.  En une phrase : c'est un outil de priorisation de la revue humaine, et c'est comme ça qu'il doit se vendre. Le jour où on le présente comme un label de vérité, on recrée exactement le problème qu'on voulait résoudre. 
+Ces limites posées, reste la question qu'on m'a posée en comité : qu'est-ce qu'on peut promettre à un client ? Ma réponse tient dans ce tableau, et vous pouvez le lire.  En une phrase : c'est un outil de priorisation de la revue humaine, et c'est comme ça qu'il doit se vendre. Le jour où on le présente comme un label de vérité, on recrée exactement le problème qu'on voulait résoudre. [IND-3]
 
 ## S17 : Industrialiser : NeuralScope 
 
@@ -117,11 +117,11 @@ Un résultat de recherche qui reste dans un notebook ne sert à personne.  La de
 
 ## S17bis : NeuralScope : deux modes 
 
-Et surtout, la plateforme offre deux modes, que vous voyez à l'écran. À gauche, le mode métier : un jeu de détection d'hallucinations et des vues avant-après, pensés pour les non-techniciens. À droite, le mode développeur, pour inspecter les probabilités phrase par phrase et régler les seuils de correction.  La valeur d'innovation est là : une surcouche légère et réutilisable, qu'un consultant Aubay peut brancher sur le modèle d'un client sans réentraînement.
+Et surtout, la plateforme offre deux modes, que vous voyez à l'écran. À gauche, le mode métier : un jeu de détection d'hallucinations et des vues avant-après, pensés pour les non-techniciens. À droite, le mode développeur, pour inspecter les probabilités phrase par phrase et régler les seuils de correction.  La valeur d'innovation est là : une surcouche légère et réutilisable, qu'un consultant Aubay peut brancher sur le modèle d'un client sans réentraînement. [IND-2]
 
 ## S19 : Choix responsables 
 
-Trois choix de conception que je défends comme des dispositifs concrets, pas comme un affichage.  L'environnement d'abord : de la frugalité par conception. Des modèles de deux cent cinquante-six millions à trois milliards de paramètres, choisis par benchmark ; une correction à l'inférence qui évite le coût énergétique d'un réentraînement ; un repli automatique sur CPU et de la quantification.  Ce sont mes dispositifs face au risque environnemental de la course aux modèles géants.
+Trois choix de conception que je défends comme des dispositifs concrets, pas comme un affichage. [IND-5]  L'environnement d'abord : de la frugalité par conception. Des modèles de deux cent cinquante-six millions à trois milliards de paramètres, choisis par benchmark ; une correction à l'inférence qui évite le coût énergétique d'un réentraînement ; un repli automatique sur CPU et de la quantification.  Ce sont mes dispositifs face au risque environnemental de la course aux modèles géants. [IND-4]
 
 Les données ensuite : cent pour cent local, aucun appel d'API cloud, le dispositif qui neutralise le risque de fuite sur des données sensibles. La société enfin : le mode métier et le jeu pédagogique rendent le sujet accessible aux non-techniciens, et la perspective qui me tient à cœur, c'est la description d'images fiable pour les personnes malvoyantes.
 

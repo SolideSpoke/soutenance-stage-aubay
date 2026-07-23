@@ -48,7 +48,7 @@
       \end{block}
     \column{0.48\textwidth}
       \begin{alertblock}{Why not the 8B model?}
-        \small Recall 0.903 — but heavy over-flagging, prohibitive runtime
+        \small Recall 0.903, but the lowest precision (0.360) and a prohibitive runtime
       \end{alertblock}
   \end{columns}
   \end{enslide}
@@ -101,7 +101,7 @@
   \par\vspace{0.1cm}
   {\footnotesize\itshape « A \textbf{popular attraction} in many countries\ldots{} \textbf{traditional European designs}. »\par}
   \vspace{0.12cm}
-  \AubayStatusChip{AubayDanger}{SCORE 1.00}\hspace{0.15cm}
+  \AubayStatusChip{AubayDanger}{0\% GROUNDED IN REFERENCE}\hspace{0.15cm}
   \AubayStatusChip{AubayTeal}{CONTEXT $\neq$ FABRICATION}
   \vspace{0.3cm}
   \centering
@@ -126,7 +126,7 @@
     \toprule
     \textbf{Limit / risk} & \textbf{Mitigation in place} \\
     \midrule
-    ROC-AUC $\approx$ 0.645 on generalist images & \textbf{Triage signal} for human review — not ground truth \\
+    ROC-AUC $\approx$ 0.645 on generalist images & \textbf{Triage signal} for human review, not ground truth \\
     Over-flagging (recall-oriented) & Tunable threshold · keep safest sentences \\
     Domain dependence & Cross-dataset protocol $\Rightarrow$ retrain per domain \\
     Definition of "hallucination" & Documented bias: strict factuality (previous slide) \\

@@ -6,16 +6,16 @@
 \begin{frame}{Du papier de recherche à l'arbitrage de valeur}
   \framesubtitle{Une démarche : explorer large, converger vite}
   \begin{enumerate}
-    \item \textbf{État de l'art} : interprétabilité mécaniste, hallucinations des VLM
-    \item \textbf{PoC parallèles} : dashboard d'audit \textit{vs} effacement d'hallucinations
-    \item \textbf{Arbitrage} : valeur métier, coût, démontrabilité
+    \item \textbf{Explorer large} : l'état de l'art
+    \item \textbf{Prototyper en parallèle} : dashboard d'audit \textit{vs} effacement d'hallucinations
+    \item \textbf{Arbitrer} : valeur métier, démontrabilité
   \end{enumerate}
   \vspace{0.3cm}
   \centering
   \begin{minipage}{0.86\textwidth}
     \AubayFocusPanel{Critère de convergence}{Une méthode \textbf{intégrable chez un client} vaut plus qu'une méthode parfaite en labo.}
   \end{minipage}
-  \AubayTraceRef{A.3.1}
+  \AubayTraceRef{A.3.2}
 \end{frame}
 
 % ============================================================
@@ -104,8 +104,8 @@
   \framesubtitle{ASD : Activation Steering Decoding}
   \begin{itemize}
     \item Calibration contrastive : tokens \textbf{factuels} \textit{vs} \textbf{hallucinés}
-    \item Vecteur de contrôle injecté au \textbf{tiers central du décodeur}
-    \item $\alpha$ (contraste), $\lambda$ (intensité) : \textbf{recherche manuelle}
+    \item Injection $z_l \pm \lambda\,\hat{v}_l$ dans les activations du \textbf{tiers central du décodeur}
+    \item Décodage contrastif sur les logits : $\alpha$ dose le contraste, \textbf{recherche manuelle}
   \end{itemize}
   \vspace{0.15cm}
   \centering
@@ -144,6 +144,12 @@
 % ============================================================
 % S10 — Pipeline filter+asd
 % ============================================================
+% Reveal en 3 temps : opacité nulle hors overlay => géométrie stable dans le resizebox
+\tikzset{
+  invisible/.style={opacity=0,text opacity=0},
+  visible on/.style={alt={#1{}{invisible}}},
+  alt/.code args={<#1>#2#3}{\alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}}}
+}
 \begin{frame}{L'architecture finale : \texttt{filter+asd}}
   \framesubtitle{Corriger uniquement quand c'est risqué}
   \centering
@@ -158,30 +164,36 @@
     arrow/.style={->,>=Stealth,thick,draw=AubayInk},
     softarrow/.style={->,>=Stealth,thick,dashed,draw=AubaySlate}
   ]
+    % --- Temps 1 : le tronc commun génération + scoring ---
     \node[graybox]  (input) at (0,3.1) {Image\\+ prompt};
     \node[graybox]  (vlm)   at (2.9,3.1) {VLM\\description};
     \node[bluebox]  (split) at (5.8,3.1) {Découpage\\en phrases};
     \node[bluebox]  (ntp)   at (8.7,3.1) {NTP\\score de risque};
-    \node[greenbox] (low)  at (6.8,1.75) {Risque faible\\on conserve};
-    \node[redbox]   (high) at (10.6,1.75) {Risque élevé\\on corrige};
-    \node[greenbox]  (kept)  at (6.8,0.55) {Phrase\\conservée};
-    \node[orangebox] (asd)   at (10.6,0.55) {ASD\\réduit le biais};
-    \node[greenbox]  (fixed) at (10.6,-0.65) {Phrase\\corrigée};
-    \node[graybox,minimum width=3.1cm] (final) at (8.7,-1.8) {Texte final corrigé};
+    % --- Temps 2 : piste OK ---
+    \node[greenbox,visible on=<2->] (low)  at (6.8,1.75) {Risque faible\\on conserve};
+    \node[greenbox,visible on=<2->]  (kept)  at (6.8,0.55) {Phrase\\conservée};
+    % --- Temps 3 : piste ALERTE + texte final ---
+    \node[redbox,visible on=<3->]   (high) at (10.6,1.75) {Risque élevé\\on corrige};
+    \node[orangebox,visible on=<3->] (asd)   at (10.6,0.55) {ASD\\réduit le biais};
+    \node[greenbox,visible on=<3->]  (fixed) at (10.6,-0.65) {Phrase\\corrigée};
+    \node[graybox,minimum width=3.1cm,visible on=<3->] (final) at (8.7,-1.8) {Texte final corrigé};
     \draw[arrow] (input) -- (vlm);
     \draw[arrow] (vlm) -- (split);
     \draw[arrow] (split) -- (ntp);
-    \draw[softarrow,draw=AubaySuccess] (ntp.south) -- (low.north);
-    \draw[softarrow,draw=AubayDanger] (ntp.south) -- (high.north);
-    \draw[arrow] (low) -- (kept);
-    \draw[arrow] (high) -- (asd);
-    \draw[arrow] (asd) -- (fixed);
-    \draw[arrow] (kept.south) |- (final.west);
-    \draw[arrow] (fixed.south) |- (final.east);
-    \node[draw=AubaySuccess,line width=1.6pt,rounded corners=7pt,fit=(low)(kept),inner sep=7pt,
-          label={[font=\small\bfseries,text=AubaySuccess,fill=white,inner sep=2pt]west:PISTE OK}] {};
-    \node[draw=AubayDanger,line width=1.6pt,rounded corners=7pt,fit=(high)(asd)(fixed),inner sep=7pt,
-          label={[font=\small\bfseries,text=AubayDanger,fill=white,inner sep=2pt]east:PISTE ALERTE}] {};
+    \draw[softarrow,draw=AubaySuccess,visible on=<2->] (ntp.south) -- (low.north);
+    \draw[softarrow,draw=AubayDanger,visible on=<3->] (ntp.south) -- (high.north);
+    \draw[arrow,visible on=<2->] (low) -- (kept);
+    \draw[arrow,visible on=<3->] (high) -- (asd);
+    \draw[arrow,visible on=<3->] (asd) -- (fixed);
+    \draw[arrow,visible on=<3->] (kept.south) |- (final.west);
+    \draw[arrow,visible on=<3->] (fixed.south) |- (final.east);
+    \node[draw=AubaySuccess,line width=1.6pt,rounded corners=7pt,fit=(low)(kept),inner sep=7pt,visible on=<2->,
+          label={[font=\small\bfseries,text=AubaySuccess,fill=white,inner sep=2pt,visible on=<2->]west:PISTE OK}] {};
+    \node[draw=AubayDanger,line width=1.6pt,rounded corners=7pt,fit=(high)(asd)(fixed),inner sep=7pt,visible on=<3->,
+          label={[font=\small\bfseries,text=AubayDanger,fill=white,inner sep=2pt,visible on=<3->]east:PISTE ALERTE}] {};
+    % Écho décoratif de l'exemple d'introduction (S02), dernier overlay uniquement
+    \node[font=\scriptsize\itshape,text=AubaySlate,align=center,visible on=<3->] at (8.7,-2.55)
+      {« un plat bleu » $\rightarrow$ « des mangues et des citrons »};
   \end{tikzpicture}}
   \vspace{0.18cm}
 
